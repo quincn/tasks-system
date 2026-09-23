@@ -1,69 +1,220 @@
-# CodeIgniter 4 Application Starter
+# Tasks for Today Management System
 
-## What is CodeIgniter?
+A simple task management web application developed using **CodeIgniter 4** and **MySQL**.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+The system displays today's tasks, provides a complete task list, displays a demo user profile, and includes an About page identifying the developer.
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+## Features
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+The application contains four pages:
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+- **Home / Welcome** - Displays only tasks scheduled for today's date
+- **Task List** - Displays all tasks ordered by date
+- **Profile** - Displays the single demo user's information
+- **About** - Displays information about the system and developer
 
-## Installation & updates
+## Routes
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+| Page | Route |
+|---|---|
+| Welcome / Today's Tasks | `/` |
+| Task List | `/tasks` |
+| Profile | `/profile` |
+| About | `/about` |
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+## Database
 
-## Setup
+The application uses a MySQL database named:
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+```text
+tasks_system
+```
 
-## Important Change with index.php
+The database contains two tables:
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+### Tasks
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+The `tasks` table contains:
 
-**Please** read the user guide for a better explanation of how CI4 works!
+- `id`
+- `title`
+- `status`
+- `task_date`
+- `created_at`
 
-## Repository Management
+The table contains at least 8 sample tasks spanning at least 3 different dates.
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+### Users
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+The `users` table contains:
 
-## Server Requirements
+- `id`
+- `username`
+- `full_name`
+- `email`
+- `created_at`
 
-PHP version 8.2 or higher is required, with the following extensions installed:
+The table contains exactly one demo user.
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+## Database Export
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - The end of life date for PHP 8.1 was December 31, 2025.
-> - If you are still using below PHP 8.2, you should upgrade immediately.
-> - The end of life date for PHP 8.2 will be December 31, 2026.
+The database export is included in the repository at:
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+```text
+database/tasks_system.sql
+```
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
+This file can be imported into MySQL using phpMyAdmin.
+
+## CodeIgniter Models
+
+The application uses two CodeIgniter Models:
+
+```text
+app/Models/TaskModel.php
+app/Models/UserModel.php
+```
+
+### TaskModel
+
+`TaskModel` retrieves records from the `tasks` table.
+
+The Welcome page filters the records so that only tasks scheduled for today's date are displayed.
+
+The Task List page retrieves all tasks and orders them by task date.
+
+### UserModel
+
+`UserModel` retrieves the single demo user from the `users` table for the Profile page.
+
+## Application Flow
+
+The application follows the CodeIgniter MVC structure:
+
+```text
+Route
+  ↓
+Controller
+  ↓
+Model
+  ↓
+MySQL Database
+  ↓
+Controller
+  ↓
+View
+  ↓
+Browser
+```
+
+## Project Structure
+
+```text
+app/
+├── Config/
+│   └── Routes.php
+├── Controllers/
+│   ├── Welcome.php
+│   ├── Tasks.php
+│   ├── Profile.php
+│   └── Pages.php
+├── Models/
+│   ├── TaskModel.php
+│   └── UserModel.php
+└── Views/
+    ├── welcome.php
+    ├── tasks.php
+    ├── profile.php
+    └── about.php
+
+database/
+└── tasks_system.sql
+```
+
+## Technologies Used
+
+- PHP
+- CodeIgniter 4
+- MySQL
+- phpMyAdmin
+- Composer
+- HTML
+- Git
+- GitHub
+- InfinityFree
+
+## Local Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/quincn/tasks-system.git
+```
+
+Enter the project directory:
+
+```bash
+cd tasks-system
+```
+
+Install the Composer dependencies:
+
+```bash
+composer install
+```
+
+Create a `.env` file from the provided `env` template:
+
+```cmd
+copy env .env
+```
+
+Create a MySQL database named:
+
+```text
+tasks_system
+```
+
+Import the database file:
+
+```text
+database/tasks_system.sql
+```
+
+Configure the database connection in `.env`:
+
+```ini
+CI_ENVIRONMENT = development
+
+app.baseURL = 'http://localhost:8080/'
+
+database.default.hostname = localhost
+database.default.database = tasks_system
+database.default.username = root
+database.default.password =
+database.default.DBDriver = MySQLi
+database.default.DBPrefix =
+database.default.port = 3306
+```
+
+Start the CodeIgniter development server:
+
+```bash
+php spark serve
+```
+
+Then open:
+
+```text
+http://localhost:8080/
+```
+
+## Live Application
+
+The hosted and working version of the application is available at:
+
+http://klyn-tasks.wuaze.com/
+
+## Developer
+
+Developed by **Andrei Klein Serrano**.
