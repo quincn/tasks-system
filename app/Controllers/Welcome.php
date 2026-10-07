@@ -14,7 +14,9 @@ class Welcome extends BaseController
 
         $tasks = $taskModel
             ->where('task_date', $today)
+            ->where('is_archived', 0)
             ->findAll();
+            
 
         return view('welcome', ['tasks' => $tasks]);
     }

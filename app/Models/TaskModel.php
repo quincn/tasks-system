@@ -13,6 +13,7 @@ class TaskModel extends Model
         'title',
         'status',
         'task_date',
+        'is_archived',
         'created_at'
     ];
 }
